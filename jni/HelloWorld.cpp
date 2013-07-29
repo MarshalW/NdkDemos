@@ -42,10 +42,14 @@ jstring str2jstring(JNIEnv* env, const char* pat) {
 
 JNIEXPORT jstring JNICALL Java_com_demos_ndk_HelloWorld_sayHello(JNIEnv *env,
 		jobject thiz, jstring name) {
-	string c=jstring2str(env,name);
-	string s="你好，"+c+"！";
-	return str2jstring(env,s.c_str());
+	string c = jstring2str(env, name);
+	string s = "你好，" + c + "！";
+	return str2jstring(env, s.c_str());
 }
 
-
+JNIEXPORT jintArray JNICALL Java_com_demos_ndk_HelloWorld_drawImage(JNIEnv *env,
+		jobject thiz, jintArray image, jint width, jint height) {
+	jintArray result = env->NewIntArray(100);
+	return result;
+}
 

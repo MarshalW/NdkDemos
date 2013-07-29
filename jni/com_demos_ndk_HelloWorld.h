@@ -15,6 +15,14 @@ extern "C" {
 JNIEXPORT jstring JNICALL Java_com_demos_ndk_HelloWorld_sayHello
   (JNIEnv *, jobject, jstring);
 
+/*
+ * Class:     com_demos_ndk_HelloWorld
+ * Method:    drawImage
+ * Signature: ([III)[I
+ */
+JNIEXPORT jintArray JNICALL Java_com_demos_ndk_HelloWorld_drawImage
+  (JNIEnv *, jobject, jintArray, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif
