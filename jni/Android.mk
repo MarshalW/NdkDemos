@@ -5,8 +5,8 @@ include $(CLEAR_VARS)
 OPENCV_LIB_TYPE:=STATIC
 include /opt/OpenCV-2.4.6-android-sdk/sdk/native/jni/OpenCV.mk
 
-LOCAL_MODULE    := HelloWorld 
-LOCAL_SRC_FILES := HelloWorld.cpp
+LOCAL_MODULE    := FeatureDetect 
+LOCAL_SRC_FILES := FeatureDetect.cpp
 
 APP_STL:=stlport_static
 

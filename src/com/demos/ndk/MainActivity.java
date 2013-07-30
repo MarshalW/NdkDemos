@@ -12,6 +12,8 @@ import android.widget.ImageView;
 public class MainActivity extends Activity {
 
 	private ImageView imageView;
+	
+	private FeatureDetect detect;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -19,23 +21,21 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		imageView = (ImageView) findViewById(R.id.imageView);
+		
+		detect=new FeatureDetect();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d("ndkdemos", new HelloWorld().sayHello("王五"));
 
-		Bitmap img = ((BitmapDrawable) getResources().getDrawable(R.raw.f1))
+		Bitmap originImage = ((BitmapDrawable) getResources().getDrawable(R.raw.f1))
 				.getBitmap();
-		int w = img.getWidth(), h = img.getHeight();
-		int[] pix = new int[w * h];
-		img.getPixels(pix, 0, w, 0, 0, w, h);
-		int[] resultInt = new HelloWorld().drawImage(pix, w, h);
-		Bitmap resultImg = Bitmap.createBitmap(w, h, Config.RGB_565);
-		resultImg.setPixels(resultInt, 0, w, 0, 0, w, h);
-
-		imageView.setImageBitmap(resultImg);
+		Bitmap targetImage = ((BitmapDrawable) getResources().getDrawable(R.raw.f13))
+				.getBitmap();
+		
+		Bitmap markedImage=detect.markMatchImage(originImage, targetImage);
+		imageView.setImageBitmap(markedImage);
 	}
 
 	@Override
