@@ -43,22 +43,6 @@ jstring str2jstring(JNIEnv* env, const char* pat) {
 	return (jstring) (env)->NewObject(strClass, ctorID, bytes, encoding);
 }
 
-IplImage * change4channelTo3InIplImage(IplImage * src) {
-	if (src->nChannels != 4) {
-		return NULL;
-	}
-
-	IplImage * destImg = cvCreateImage(cvGetSize(src), IPL_DEPTH_8U, 3);
-	for (int row = 0; row < src->height; row++) {
-		for (int col = 0; col < src->width; col++) {
-			CvScalar s = cvGet2D(src, row, col);
-			cvSet2D(destImg, row, col, s);
-		}
-	}
-
-	return destImg;
-}
-
 JNIEXPORT jstring JNICALL Java_com_demos_ndk_HelloWorld_sayHello(JNIEnv *env,
 		jobject thiz, jstring name) {
 	string c = jstring2str(env, name);
@@ -68,27 +52,28 @@ JNIEXPORT jstring JNICALL Java_com_demos_ndk_HelloWorld_sayHello(JNIEnv *env,
 
 JNIEXPORT jintArray JNICALL Java_com_demos_ndk_HelloWorld_drawImage(JNIEnv *env,
 		jobject thiz, jintArray image, jint width, jint height) {
-
 	jint *cbuf;
 	cbuf = env->GetIntArrayElements(image, false);
+	Mat img(height, width, CV_8UC4, (unsigned char*) cbuf);
 
-	Mat myimg(height, width, CV_8UC4, (unsigned char*) cbuf);
-	IplImage img = IplImage(myimg);
+	OrbFeatureDetector detector(1000);
+	OrbDescriptorExtractor extractor(1000);
+	vector<KeyPoint> keyPoints;
+	Mat descriptor;
+	detector.detect(img, keyPoints, descriptor);
+	extractor.compute(img, keyPoints, descriptor);
 
-	IplImage* image3channel = change4channelTo3InIplImage(&img);
-	IplImage* pCannyImage = cvCreateImage(cvGetSize(image3channel),
-	IPL_DEPTH_8U, 1);
-
-	cvCanny(image3channel, pCannyImage, 50, 150, 3);
-
-	int* outImage = new int[width * height];
-	for (int i = 0; i < width * height; i++) {
-		outImage[i] = (int) pCannyImage->imageData[i];
+	for(int i=0;i<keyPoints.size();i++){
+		KeyPoint k=keyPoints.at(i);
+		circle(img,k.pt,8,Scalar(255,0,0));
 	}
+
 
 	int size = width * height;
 	jintArray result = env->NewIntArray(size);
-	env->SetIntArrayRegion(result, 0, size, outImage);
+	env->SetIntArrayRegion(result, 0, size, cbuf);
+
 	env->ReleaseIntArrayElements(image, cbuf, 0);
+
 	return result;
 }

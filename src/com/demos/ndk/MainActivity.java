@@ -10,15 +10,15 @@ import android.view.Menu;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
-	
+
 	private ImageView imageView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		imageView=(ImageView)findViewById(R.id.imageView);
+
+		imageView = (ImageView) findViewById(R.id.imageView);
 	}
 
 	@Override
@@ -31,9 +31,9 @@ public class MainActivity extends Activity {
 		int w = img.getWidth(), h = img.getHeight();
 		int[] pix = new int[w * h];
 		img.getPixels(pix, 0, w, 0, 0, w, h);
-		int[] resultInt=new HelloWorld().drawImage(pix, w, h);
-		Bitmap resultImg = Bitmap.createBitmap(w, h, Config.RGB_565);  
-        resultImg.setPixels(resultInt, 0, w, 0, 0, w, h);
+		int[] resultInt = new HelloWorld().drawImage(pix, w, h);
+		Bitmap resultImg = Bitmap.createBitmap(w, h, Config.RGB_565);
+		resultImg.setPixels(resultInt, 0, w, 0, 0, w, h);
 
 		imageView.setImageBitmap(resultImg);
 	}
