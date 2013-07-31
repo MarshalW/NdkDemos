@@ -5,6 +5,7 @@
  *      Author: marshal
  */
 #include <jni.h>
+#include <android/log.h>
 #include <stdio.h>
 #include <iostream>
 #include <opencv2/opencv.hpp>
@@ -13,10 +14,11 @@
 using namespace std;
 using namespace cv;
 
+#define LOGI(...) ((void)__android_log_print(ANDROID_LOG_INFO, "ndkdemos", __VA_ARGS__))
+
 JNIEXPORT jintArray JNICALL Java_com_demos_ndk_FeatureDetect_nativeMarkImage(
 		JNIEnv *env, jobject thiz, jintArray image0, jint width0, jint height0,
 		jintArray image, jint width, jint height) {
-
 	jint *cbuf0;
 	cbuf0 = env->GetIntArrayElements(image0, false);
 	Mat img0(height0, width0, CV_8UC4, (unsigned char*) cbuf0);
@@ -29,9 +31,9 @@ JNIEXPORT jintArray JNICALL Java_com_demos_ndk_FeatureDetect_nativeMarkImage(
 	Ptr<flann::SearchParams> searchParams = new flann::SearchParams();
 
 	indexParams->setAlgorithm(cvflann::FLANN_INDEX_LSH);
-	indexParams->setInt("table_number",6);
-	indexParams->setInt("key_size",12);
-	indexParams->setInt("multi_probe_level",1);
+	indexParams->setInt("table_number", 6);
+	indexParams->setInt("key_size", 12);
+	indexParams->setInt("multi_probe_level", 1);
 	searchParams->setAlgorithm(cvflann::FLANN_INDEX_LSH);
 
 	FlannBasedMatcher matcher(indexParams, searchParams);
@@ -50,12 +52,19 @@ JNIEXPORT jintArray JNICALL Java_com_demos_ndk_FeatureDetect_nativeMarkImage(
 	descriptors.push_back(descriptor0);
 	matcher.add(descriptors);
 
+	clock_t now = clock();
+
 	vector<KeyPoint> keyPoints;
 	Mat descriptor;
 	detector.detect(img, keyPoints, descriptor);
 	extractor.compute(img, keyPoints, descriptor);
 
 	matcher.knnMatch(descriptor, matches, 2);
+
+	stringstream strm;
+	strm << "ORB+FLANN耗时（毫秒）：" << (clock() - now) / 1000;
+
+	LOGI(strm.str().c_str());
 
 	int size = width * height;
 	jintArray result = env->NewIntArray(size);
